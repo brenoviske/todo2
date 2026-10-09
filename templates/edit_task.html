@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Editar tarefa · Daymark{% endblock %}
+{% block content %}
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-mark">d</span><span>daymark</span></a>
+    <div class="side-label">SEU ESPAÇO</div>
+    <a class="nav-link active" href="{{ url_for('dashboard') }}"><span class="nav-icon">▦</span> Minhas tarefas</a>
+    <a class="nav-link" href="{{ url_for('metrics') }}"><span class="nav-icon">◴</span> Estatísticas</a>
+    <a class="nav-link" href="{{ url_for('profile') }}"><span class="nav-icon">◎</span> Configurações da conta</a>
+    <div class="sidebar-bottom"><div class="sidebar-tip"><span class="tip-spark">✳</span><p>Revise seus planos. Eles podem mudar junto com você.</p></div>
+      <div class="profile"><div class="avatar">{{ current_user.name[0]|upper }}</div><div class="profile-copy"><strong>{{ current_user.name }}</strong><small>{{ current_user.email }}</small></div><a class="icon-button logout" href="{{ url_for('profile') }}" title="Configurações da conta" aria-label="Configurações da conta">↗</a></div>
+    </div>
+  </aside>
+  <main class="main-area">
+    <header class="topbar"><div class="breadcrumb"><a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> <strong>Editar tarefa</strong></div><div class="topbar-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" title="Ativar modo escuro"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Modo escuro</span></button><a class="top-date profile-back" href="{{ url_for('dashboard') }}">← VOLTAR ÀS TAREFAS</a></div></header>
+    <div class="dashboard-content edit-task-content">
+      <section class="profile-heading"><span class="eyebrow">AJUSTE SEUS PLANOS</span><h1>Editar <em>tarefa.</em></h1><p class="muted">Atualize o que precisa ser feito, quando e com qual prioridade.</p></section>
+      <section class="settings-card edit-task-card">
+        <div class="settings-card-head"><div class="settings-symbol">✎</div><div><h2>Detalhes da tarefa</h2><p>As alterações ficam salvas na sua lista assim que você confirmar.</p></div></div>
+        <form class="edit-task-form" method="post" action="{{ url_for('edit_task', task_id=task.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <label class="edit-full-field">Nome da tarefa<input type="text" name="title" value="{{ task.title }}" maxlength="160" required autofocus></label>
+          <div class="form-row"><label>Prioridade<select name="priority" required><option value="low" {{ 'selected' if task.priority == 'low' else '' }}>Baixa</option><option value="medium" {{ 'selected' if task.priority == 'medium' else '' }}>Média</option><option value="high" {{ 'selected' if task.priority == 'high' else '' }}>Alta</option></select></label><label>Prazo<input type="date" name="due_date" value="{{ task.due_date.isoformat() if task.due_date else '' }}"></label></div>
+          <label class="edit-full-field">Observação <span class="optional-label">OPCIONAL</span><textarea name="notes" rows="5" placeholder="Adicione detalhes ou contexto para esta tarefa…">{{ task.notes }}</textarea></label>
+          <div class="edit-task-actions"><a class="cancel-edit" href="{{ url_for('dashboard') }}">Cancelar</a><button type="submit" class="button button-dark">Salvar alterações <span>→</span></button></div>
+        </form>
+      </section>
+    </div>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Criar conta' if mode == 'register' else 'Bem-vindo de volta' }} · Daymark{% endblock %}
+{% block content %}
+<main class="auth-shell">
+  <section class="auth-aside">
+    <a class="brand brand-light" href="{{ url_for('home') }}"><span class="brand-mark">d</span><span>daymark</span></a>
+    <div class="aside-copy"><span class="eyebrow">ABRA ESPAÇO PARA O QUE IMPORTA</span><h1>Mais leveza,<br><em>mais intenção.</em></h1><p>Um lugar tranquilo para organizar seus planos, suas prioridades e o que merece sua atenção.</p></div>
+    <div class="aside-note"><span>✳</span> Seu dia com mais clareza e propósito.</div>
+    <div class="aside-orb orb-one"></div><div class="aside-orb orb-two"></div>
+  </section>
+  <section class="auth-main">
+    <div class="auth-form-wrap">
+      <div class="auth-theme-row"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" title="Ativar modo escuro"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Modo escuro</span></button></div>
+      <div class="auth-mobile-brand"><a class="brand" href="{{ url_for('home') }}"><span class="brand-mark">d</span><span>daymark</span></a></div>
+      <span class="eyebrow">{{ 'SEU ESPAÇO COMEÇA AQUI' if mode == 'register' else 'QUE BOM TER VOCÊ DE VOLTA' }}</span>
+      <h2>{{ 'Crie sua conta' if mode == 'register' else 'Boas-vindas de volta' }}</h2>
+      <p class="muted">{{ 'Uma forma mais leve de colocar seus planos em prática.' if mode == 'register' else 'Continue de onde você parou.' }}</p>
+      <form method="post" class="auth-form">
+        {% if mode == 'register' %}<label>Seu nome<input name="name" type="text" placeholder="Ana Silva" autocomplete="name" required maxlength="80"></label>{% endif %}
+        <label>E-mail<input name="email" type="email" placeholder="voce@exemplo.com" autocomplete="email" required></label>
+        <label>Senha<input name="password" type="password" placeholder="Pelo menos 8 caracteres" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" required minlength="8"></label>
+        <button class="button button-dark button-wide" type="submit">{{ 'Criar conta' if mode == 'register' else 'Entrar' }} <span>→</span></button>
+      </form>
+      <p class="auth-switch">{{ 'Já tem uma conta?' if mode == 'register' else 'Ainda não tem uma conta?' }} <a href="{{ url_for('login' if mode == 'register' else 'register') }}">{{ 'Entrar' if mode == 'register' else 'Criar uma conta' }}</a></p>
+      <div class="auth-foot">Um cantinho mais tranquilo para organizar suas tarefas.</div>
+    </div>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,17 @@
+{
+  "name": "Daymark — seu espaço, seu ritmo",
+  "short_name": "Daymark",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f5f1",
+  "theme_color": "#314d3c",
+  "icons": [
+    {
+      "src": "/static/daymark-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

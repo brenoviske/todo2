@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Configurações da conta · Daymark{% endblock %}
+{% block content %}
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-mark">d</span><span>daymark</span></a>
+    <div class="side-label">SEU ESPAÇO</div>
+    <a class="nav-link" href="{{ url_for('dashboard') }}"><span class="nav-icon">▦</span> Minhas tarefas</a>
+    <a class="nav-link" href="{{ url_for('metrics') }}"><span class="nav-icon">◴</span> Estatísticas</a>
+    <a class="nav-link active" href="{{ url_for('profile') }}"><span class="nav-icon">◎</span> Configurações da conta</a>
+    <div class="sidebar-bottom"><div class="sidebar-tip"><span class="tip-spark">✳</span><p>Sua conta, seu espaço. Mantenha seus dados atualizados.</p></div>
+      <div class="profile"><div class="avatar">{{ current_user.name[0]|upper }}</div><div class="profile-copy"><strong>{{ current_user.name }}</strong><small>{{ current_user.email }}</small></div><form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="icon-button logout" title="Sair da conta" aria-label="Sair da conta">↗</button></form></div>
+    </div>
+  </aside>
+  <main class="main-area">
+    <header class="topbar"><div class="breadcrumb"><a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> <strong>Configurações da conta</strong></div><div class="topbar-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" title="Ativar modo escuro"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Modo escuro</span></button><a class="top-date profile-back" href="{{ url_for('dashboard') }}">← VOLTAR ÀS TAREFAS</a></div></header>
+    <div class="dashboard-content profile-content">
+      <section class="profile-heading"><span class="eyebrow">SUA CONTA</span><h1>Configurações e <em>você.</em></h1><p class="muted">Atualize seus dados pessoais e mantenha sua conta protegida.</p></section>
+      <div class="profile-layout">
+        <section class="settings-card"><div class="settings-card-head"><div class="settings-symbol">◎</div><div><h2>Dados pessoais</h2><p>Atualize o nome e o e-mail associados à sua conta.</p></div></div>
+          <form class="settings-form" method="post" action="{{ url_for('profile') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="form-row"><label>Nome completo<input name="name" type="text" value="{{ current_user.name }}" maxlength="80" autocomplete="name" required></label><label>E-mail<input name="email" type="email" value="{{ current_user.email }}" autocomplete="email" required></label></div>
+            <div class="settings-divider"></div><div class="settings-card-head password-head"><div class="settings-symbol soft">⌑</div><div><h2>Alterar senha</h2><p>Deixe os campos abaixo em branco para manter sua senha atual.</p></div></div>
+            <div class="form-row"><label>Senha atual<input name="current_password" type="password" autocomplete="current-password" placeholder="Necessária para trocar a senha"></label><label>Nova senha<input name="new_password" type="password" minlength="8" autocomplete="new-password" placeholder="Pelo menos 8 caracteres"></label></div>
+            <div class="settings-actions"><span>Mantenha seus dados de acesso em segurança.</span><button class="button button-dark" type="submit">Salvar alterações <span>→</span></button></div>
+          </form>
+        </section>
+        <aside class="account-summary"><div class="summary-cover"><span>✳</span></div><div class="summary-avatar">{{ current_user.name[0]|upper }}</div><div class="summary-info"><h2>{{ current_user.name }}</h2><p>{{ current_user.email }}</p><span class="member-tag"><i></i> PESSOA USUÁRIA DAYMARK</span></div><div class="summary-bottom"><span>CONTA CRIADA EM</span><strong id="created-date" data-date="{{ current_user.created_at.isoformat() }}"></strong></div></aside>
+      </div>
+      <section class="danger-zone"><div><span class="eyebrow">CONTROLE DA CONTA</span><h2>Excluir sua conta</h2><p>Isso removerá permanentemente sua conta e todas as suas tarefas. Esta ação não pode ser desfeita.</p></div><form method="post" action="{{ url_for('delete_account') }}" onsubmit="return confirm('Tem certeza de que deseja excluir permanentemente sua conta e todas as suas tarefas? Esta ação não pode ser desfeita.');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label for="delete-password">Confirme com sua senha</label><div class="delete-account-row"><input id="delete-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha atual" required><button class="button button-danger" type="submit">Excluir conta</button></div></form></section>
+      <footer class="page-footer"><span>DAYMARK <span class="footer-dot">✳</span> ABRA ESPAÇO PARA O QUE IMPORTA</span><span>UMA COISA DE CADA VEZ.</span></footer>
+    </div>
+  </main>
+</div>
+{% endblock %}
