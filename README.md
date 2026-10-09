@@ -24,7 +24,7 @@ Copy `.env.example` to `.env`, then set separate, private random values for `SEC
 python app.py
 ```
 
-Visit http://127.0.0.1:5000 and create an account. SQLite database `tasks.db` is created automatically in Flask's instance folder. To use PostgreSQL in production, install a PostgreSQL driver such as `psycopg[binary]` and set `DATABASE_URL` to a SQLAlchemy connection URL.
+Visit http://127.0.0.1:5000 and create an account. SQLite database `tasks.db` is created automatically when `DATABASE_URL` is not changed. For MySQL, use a SQLAlchemy URL in the form `mysql+pymysql://user:password@host:3306/database`; the `PyMySQL` driver is included in `requirements.txt`. Railway's `.internal` database hostname is only reachable from services running inside Railway; use the public connection details for local development.
 
 ## Dependencies
 
