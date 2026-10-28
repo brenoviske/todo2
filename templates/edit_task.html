@@ -8,12 +8,14 @@
     <a class="nav-link active" href="{{ url_for('dashboard') }}"><span class="nav-icon">▦</span> Minhas tarefas</a>
     <a class="nav-link" href="{{ url_for('metrics') }}"><span class="nav-icon">◴</span> Estatísticas</a>
     <a class="nav-link" href="{{ url_for('profile') }}"><span class="nav-icon">◎</span> Configurações da conta</a>
+    <a class="nav-link" href="{{ url_for('plans') }}"><span class="nav-icon">✦</span> Planos e upgrade</a>
+    <a class="nav-link" href="{{ url_for('billing') }}"><span class="nav-icon">▤</span> Minha assinatura</a>
     <div class="sidebar-bottom"><div class="sidebar-tip"><span class="tip-spark">✳</span><p>Revise seus planos. Eles podem mudar junto com você.</p></div>
       <div class="profile"><div class="avatar">{{ current_user.name[0]|upper }}</div><div class="profile-copy"><strong>{{ current_user.name }}</strong><small>{{ current_user.email }}</small></div><a class="icon-button logout" href="{{ url_for('profile') }}" title="Configurações da conta" aria-label="Configurações da conta">↗</a></div>
     </div>
   </aside>
   <main class="main-area">
-    <header class="topbar"><div class="breadcrumb"><a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> <strong>Editar tarefa</strong></div><div class="topbar-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" title="Ativar modo escuro"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Modo escuro</span></button><a class="top-date profile-back" href="{{ url_for('dashboard') }}">← VOLTAR ÀS TAREFAS</a></div></header>
+    <header class="topbar"><div class="breadcrumb"><a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> <strong>Editar tarefa</strong></div><div class="topbar-actions"><a class="upgrade-link" href="{{ url_for('plans') }}">Conheça os planos</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" title="Ativar modo escuro"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Modo escuro</span></button><a class="top-date profile-back" href="{{ url_for('dashboard') }}">← VOLTAR ÀS TAREFAS</a></div></header>
     <div class="dashboard-content edit-task-content">
       <section class="profile-heading"><span class="eyebrow">AJUSTE SEUS PLANOS</span><h1>Editar <em>tarefa.</em></h1><p class="muted">Atualize o que precisa ser feito, quando e com qual prioridade.</p></section>
       <section class="settings-card edit-task-card">

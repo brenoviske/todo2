@@ -12,6 +12,9 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     tasks = db.relationship("Task", back_populates="owner", cascade="all, delete-orphan", lazy=True)
+    daily_plans = db.relationship("DailyPlan", back_populates="owner", cascade="all, delete-orphan")
+    weekly_reviews = db.relationship("WeeklyReview", back_populates="owner", cascade="all, delete-orphan")
+    subscription = db.relationship("Subscription", back_populates="owner", cascade="all, delete-orphan", uselist=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Checkout recebido · Daymark{% endblock %}
+{% block content %}
+<main class="dashboard-content saas-content checkout-content">
+  <section class="checkout-card settings-card">
+    <span class="eyebrow">CHECKOUT CONCLUÍDO</span>
+    <h1>Estamos preparando seu <em>Daymark Plus.</em></h1>
+    <p class="muted">O Stripe está confirmando sua assinatura. Seu plano será atualizado assim que a confirmação segura chegar.</p>
+    <a class="button button-dark" href="{{ url_for('billing') }}">Ver minha assinatura <span>→</span></a>
+  </section>
+</main>
+{% endblock %}

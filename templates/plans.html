@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Planos · Daymark{% endblock %}
+{% block content %}
+<main class="dashboard-content saas-content">
+  <header class="topbar saas-topbar"><div class="breadcrumb">{% if current_user %}<a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> {% endif %}<strong>Planos</strong></div><div class="topbar-actions">{% if current_user %}<a class="upgrade-link" href="{{ url_for('billing') }}">Minha assinatura</a><a class="top-date profile-back" href="{{ url_for('dashboard') }}">← VOLTAR AO DAYMARK</a>{% else %}<a class="upgrade-link" href="{{ url_for('login') }}">Entrar</a>{% endif %}</div></header>
+  <section class="profile-heading saas-heading"><span class="eyebrow">ESCOLHA SEU RITMO</span><h1>Um plano para cada <em>momento.</em></h1><p class="muted">Experimente tudo por uma semana grátis ou assine o Daymark Plus por R$ 200 ao mês.</p></section>
+  {% if subscription_state == 'expired' %}<div class="trial-ended-note"><strong>Seu teste grátis terminou.</strong> Assine o Daymark Plus por R$ 200 por mês para recuperar o acesso completo.<small>O pagamento é feito no checkout seguro do Stripe. Confira a data de início da cobrança antes de confirmar.</small></div>{% endif %}
+  <section class="plan-grid">
+    {% for plan_id, plan in plans.items() %}<article class="plan-card {{ 'plan-featured' if plan_id == 'plus' else '' }}">
+      {% if plan_id == 'plus' %}<span class="plan-badge">MAIS APOIO PARA SEU DIA</span>{% endif %}
+      <span class="eyebrow">{{ 'PARA COMEÇAR' if plan_id == 'free' else 'PARA IR MAIS LONGE' }}</span><h2>{{ plan.name }}</h2><p>{{ plan.description }}</p>
+      <div class="plan-price"><strong>{{ plan.price }}</strong><span>{{ plan.cadence }}</span></div>
+      <ul>{% for feature in plan.features %}<li><span>✓</span>{{ feature }}</li>{% endfor %}</ul>
+      {% if current_plan == plan_id and subscription_state == 'trialing' %}<span class="plan-current">Teste grátis ativo · {{ trial_days_left }} dias restantes</span>{% elif current_plan == plan_id and subscription_state == 'active' %}<span class="plan-current">Seu plano atual</span>{% elif plan_id == 'free' and current_plan == 'free' %}<span class="plan-current">Avaliação encerrada</span>{% elif plan_id == 'free' and current_user %}<a class="button button-soft plan-button" href="{{ url_for('billing') }}">Ver minha assinatura</a>{% elif plan_id == 'free' %}<a class="button button-soft plan-button" href="{{ url_for('register') }}">Começar uma semana grátis</a>{% elif current_user %}<a class="button button-dark plan-button" href="{{ url_for('billing_checkout', plan_id=plan_id) }}">Assinar Daymark Plus <span>→</span></a>{% else %}<a class="button button-dark plan-button" href="{{ url_for('register', next='checkout') }}">Criar conta e fazer upgrade <span>→</span></a>{% endif %}
+    </article>{% endfor %}
+  </section>
+  <p class="billing-note">Pagamentos recorrentes são processados pelo Stripe. Durante seu teste grátis, a cobrança começa na data de encerramento exibida no checkout.</p>
+</main>
+{% endblock %}

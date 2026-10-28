@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Rituais de planejamento · Daymark{% endblock %}
+{% block content %}
+<main class="dashboard-content planning-content">
+  <header class="topbar"><div class="breadcrumb"><a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> <strong>Rituais de planejamento</strong></div><div class="topbar-actions"><a class="upgrade-link" href="{{ url_for('plans') }}">Planos</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Modo escuro</span></button><a class="top-date profile-back" href="{{ url_for('dashboard') }}">← VOLTAR ÀS TAREFAS</a></div></header>
+  <section class="profile-heading"><span class="eyebrow">UM MOMENTO PARA VOCÊ</span><h1>Planeje com <em>intenção.</em></h1><p class="muted">Escolha um foco para hoje e reserve alguns minutos para reconhecer seu progresso.</p></section>
+  <div class="ritual-grid">
+    <section class="settings-card ritual-card"><div class="settings-card-head"><div class="settings-symbol">☀</div><div><h2>Começo do dia</h2><p>O que tornaria este dia significativo?</p></div></div>
+      <form class="edit-task-form" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="section" value="daily">
+        <label class="edit-full-field">Minha intenção para hoje<textarea name="intention" rows="3" maxlength="500" placeholder="Ex.: trabalhar com calma em uma coisa importante…">{{ daily.intention if daily else '' }}</textarea></label>
+        <label class="edit-full-field">Meu foco principal<select name="focus_task_id"><option value="">Escolha uma tarefa (opcional)</option>{% for task in tasks %}<option value="{{ task.id }}" {{ 'selected' if daily and daily.focus_task_id == task.id else '' }}>{{ task.title }}</option>{% endfor %}</select></label>
+        <label class="edit-full-field">Reflexão do fim do dia <span class="optional-label">PODE PREENCHER DEPOIS</span><textarea name="reflection" rows="3" placeholder="O que funcionou? O que você quer reconhecer?">{{ daily.reflection if daily else '' }}</textarea></label>
+        <div class="edit-task-actions"><button type="submit" class="button button-dark">Salvar plano <span>→</span></button></div>
+      </form>
+    </section>
+    <section class="settings-card ritual-card"><div class="settings-card-head"><div class="settings-symbol soft">↻</div><div><h2>Revisão da semana</h2><p>Aprenda com a semana que passou e prepare a próxima.</p></div></div>
+      <form class="edit-task-form" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="section" value="weekly">
+        <label class="edit-full-field">Do que me orgulho nesta semana?<textarea name="wins" rows="3" placeholder="Pequenos avanços também contam…">{{ weekly.wins if weekly else '' }}</textarea></label>
+        <label class="edit-full-field">O que foi difícil ou ficou pelo caminho?<textarea name="blockers" rows="3" placeholder="Sem julgamento: o que atrapalhou?">{{ weekly.blockers if weekly else '' }}</textarea></label>
+        <label class="edit-full-field">Qual é uma prioridade para a próxima semana?<textarea name="next_week" rows="3" placeholder="Escolha um próximo passo realista…">{{ weekly.next_week if weekly else '' }}</textarea></label>
+        <div class="edit-task-actions"><button type="submit" class="button button-dark">Salvar revisão <span>→</span></button></div>
+      </form>
+    </section>
+  </div>
+</main>
+{% endblock %}

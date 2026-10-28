@@ -13,3 +13,13 @@ class Task(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
     owner = db.relationship("User", back_populates="tasks")
+    steps = db.relationship("TaskStep", back_populates="task", cascade="all, delete-orphan", order_by="TaskStep.position")
+
+
+class TaskStep(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    task_id = db.Column(db.Integer, db.ForeignKey("task.id"), nullable=False, index=True)
+    title = db.Column(db.String(200), nullable=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
+    position = db.Column(db.Integer, default=0, nullable=False)
+    task = db.relationship("Task", back_populates="steps")

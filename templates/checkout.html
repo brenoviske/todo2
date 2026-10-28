@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Upgrade para {{ plan.name }} · Daymark{% endblock %}
+{% block content %}
+<main class="dashboard-content saas-content checkout-content">
+  <header class="topbar saas-topbar"><div class="breadcrumb"><a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> <a href="{{ url_for('plans') }}">Planos</a> <span>/</span> <strong>Upgrade</strong></div><div class="topbar-actions"><a class="top-date profile-back" href="{{ url_for('billing') }}">MINHA ASSINATURA</a></div></header>
+  <section class="checkout-card settings-card">
+    <a class="checkout-back" href="{{ url_for('plans') }}">← Voltar aos planos</a>
+    <span class="eyebrow">CHECKOUT SEGURO</span>
+    <h1>Seu próximo passo é <em>mais leve.</em></h1>
+    <p class="muted">Ative o Daymark Plus para continuar organizando seu dia com clareza e intenção.</p>
+    <div class="checkout-summary"><span>{{ plan.name }} <small>assinatura mensal · cobrança em BRL</small></span><strong>{{ plan.price }}<small>/mês</small></strong></div>
+    <div class="checkout-benefits"><span>✓ Assistente de planejamento com IA</span><span>✓ Sugestões para dividir tarefas</span><span>✓ Seus planos e progresso em um só lugar</span></div>
+    <div class="stripe-placeholder"><div class="stripe-mark" aria-hidden="true">S</div><div><strong>Pagamento processado pelo Stripe</strong><p>{% if stripe_ready %}{% if trial_ends_at %}Seu teste grátis segue até {{ trial_ends_at.strftime('%d/%m/%Y') }}. A cobrança de R$ 200/mês começa nessa data. Cancele antes se não quiser continuar.{% else %}A cobrança de R$ 200/mês começa assim que você confirmar a assinatura.{% endif %} Seus dados de pagamento são inseridos no checkout seguro do Stripe.{% else %}O checkout está pausado porque falta configuração no servidor: <strong>{{ missing_stripe_settings|join(', ') }}</strong>. Depois de corrigir, reinicie o app.{% endif %}</p></div></div>
+    {% if stripe_ready %}<form method="post" class="checkout-form"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="button button-dark checkout-submit" type="submit">Continuar para o Stripe <span>→</span></button></form>{% else %}<button class="button button-dark checkout-disabled" type="button" disabled>Checkout ainda não configurado</button>{% endif %}
+    <p class="checkout-foot">Você poderá gerenciar ou cancelar sua assinatura nas configurações de cobrança. Seu acesso só muda após confirmação segura do Stripe.</p>
+  </section>
+</main>
+{% endblock %}

@@ -7,13 +7,15 @@
     <div class="side-label">SEU ESPAÇO</div>
     <a class="nav-link" href="{{ url_for('dashboard') }}"><span class="nav-icon">▦</span> Minhas tarefas</a>
     <a class="nav-link active" href="{{ url_for('metrics') }}"><span class="nav-icon">◴</span> Estatísticas</a>
+    <a class="nav-link" href="{{ url_for('plans') }}"><span class="nav-icon">✦</span> Planos e upgrade</a>
+    <a class="nav-link" href="{{ url_for('billing') }}"><span class="nav-icon">▤</span> Minha assinatura</a>
     <a class="nav-link" href="{{ url_for('profile') }}"><span class="nav-icon">◎</span> Configurações da conta</a>
     <div class="sidebar-bottom"><div class="sidebar-tip"><span class="tip-spark">✳</span><p>Reconheça o que você já conquistou. Cada passo importa.</p></div>
       <div class="profile"><div class="avatar">{{ current_user.name[0]|upper }}</div><div class="profile-copy"><strong>{{ current_user.name }}</strong><small>{{ current_user.email }}</small></div><form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="icon-button logout" title="Sair da conta" aria-label="Sair da conta">↗</button></form></div>
     </div>
   </aside>
   <main class="main-area">
-    <header class="topbar"><div class="breadcrumb"><a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> <strong>Estatísticas</strong></div><div class="topbar-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" title="Ativar modo escuro"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Modo escuro</span></button><a class="top-date profile-back" href="{{ url_for('dashboard') }}">← VOLTAR ÀS TAREFAS</a></div></header>
+    <header class="topbar"><div class="breadcrumb"><a href="{{ url_for('dashboard') }}">Meu espaço</a> <span>/</span> <strong>Estatísticas</strong></div><div class="topbar-actions"><a class="upgrade-link" href="{{ url_for('plans') }}">Conheça os planos</a><button class="theme-toggle" type="button" data-theme-toggle aria-label="Ativar modo escuro" title="Ativar modo escuro"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Modo escuro</span></button><a class="top-date profile-back" href="{{ url_for('dashboard') }}">← VOLTAR ÀS TAREFAS</a></div></header>
     <div class="dashboard-content metrics-content">
       <section class="profile-heading"><span class="eyebrow">SEU PROGRESSO EM PERSPECTIVA</span><h1>Olha só o quanto <em>você avançou.</em></h1><p class="muted">Acompanhe suas tarefas e celebre cada etapa concluída.</p></section>
       <section class="metric-summary">

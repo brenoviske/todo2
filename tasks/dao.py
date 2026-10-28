@@ -1,5 +1,5 @@
 from extensions import db
-from tasks.model import Task
+from tasks.model import Task, TaskStep
 
 
 def list_for_user(user_id):
@@ -38,3 +38,16 @@ def update(task, title, due_date, notes, priority):
 def delete(task):
     db.session.delete(task)
     db.session.commit()
+
+
+def add_steps(task, titles):
+    task.steps.clear()
+    for position, title in enumerate(titles):
+        task.steps.append(TaskStep(title=title, position=position))
+    db.session.commit()
+
+
+def toggle_step(step):
+    step.completed = not step.completed
+    db.session.commit()
+    return step

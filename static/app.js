@@ -33,6 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
     label.textContent = new Intl.DateTimeFormat("pt-BR", { weekday: "short" }).format(localDate).replace(".", "");
   });
 
+  const suggestButton = document.getElementById("suggest-steps");
+  if (suggestButton) {
+    suggestButton.addEventListener("click", async () => {
+      const status = document.getElementById("suggest-status");
+      const textarea = document.getElementById("steps-text");
+      const csrf = document.querySelector('#steps-form input[name="csrf_token"]')?.value || "";
+      suggestButton.disabled = true;
+      status.textContent = "Pensando em etapas práticas…";
+      try {
+        const response = await fetch(suggestButton.dataset.url, { method: "POST", headers: { "X-CSRF-TOKEN": csrf } });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Não foi possível sugerir etapas.");
+        textarea.value = data.steps.join("\n");
+        status.textContent = "Sugestões prontas. Revise e salve quando quiser.";
+      } catch (error) {
+        status.textContent = error.message || "Não foi possível sugerir etapas.";
+      } finally {
+        suggestButton.disabled = false;
+      }
+    });
+  }
+
   const form = document.getElementById("chat-form");
   if (!form) return;
   const input = document.getElementById("chat-input");
