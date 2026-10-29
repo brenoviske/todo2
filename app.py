@@ -3,6 +3,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from pathlib import Path
+from sqlalchemy import inspect, text
 
 from dotenv import dotenv_values, load_dotenv
 from flask import Flask, flash, g, jsonify, redirect, render_template, request, url_for
@@ -60,7 +61,7 @@ def create_app():
     application.config["APP_BASE_URL"] = (os.getenv("APP_BASE_URL") or "").rstrip("/")
     application.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY") or application.config["SECRET_KEY"]
     application.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-    application.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)
+    application.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
     application.config["JWT_COOKIE_SECURE"] = os.getenv("COOKIE_SECURE", "false").lower() == "true"
     application.config["JWT_COOKIE_SAMESITE"] = "Lax"
     application.config["JWT_COOKIE_CSRF_PROTECT"] = True
@@ -557,6 +558,15 @@ def create_app():
 
     with application.app_context():
         db.create_all()
+        task_columns = {column["name"] for column in inspect(db.engine).get_columns("task")}
+        if "completed_at" not in task_columns:
+            dialect = db.engine.dialect.name
+            if dialect == "postgresql":
+                db.session.execute(text("ALTER TABLE task ADD COLUMN IF NOT EXISTS completed_at TIMESTAMP"))
+            else:
+                column_type = db.DateTime().compile(dialect=db.engine.dialect)
+                db.session.execute(text(f"ALTER TABLE task ADD COLUMN completed_at {column_type}"))
+            db.session.commit()
 
     return application
 

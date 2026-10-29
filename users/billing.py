@@ -13,9 +13,9 @@ PLANS = {
     },
     "plus": {
         "name": "Daymark Plus",
-        "price": "R$ 200",
+        "price": "R$ 80",
         "cadence": "mensal",
-        "description": "Experimente tudo por uma semana. Depois, continue por R$ 200 ao mês.",
+        "description": "Experimente tudo por uma semana. Depois, continue por R$ 80 ao mês.",
         "features": ["1 semana grátis", "Tudo do período de avaliação", "Assistente de planejamento com IA", "Sugestões para dividir tarefas"],
     },
 }

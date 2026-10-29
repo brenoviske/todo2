@@ -55,7 +55,7 @@ The Daymark SVG app icon is served from `static/daymark-icon.svg` and registered
 
 ## Subscription billing
 
-Signed-in users get a seven-day Daymark Plus trial. After it expires, task, planning, metrics, and assistant features are blocked; users can still access plan, billing, profile, and logout pages. Daymark Plus is priced at R$ 200 per month. New registrations begin their trial immediately; existing accounts without a subscription get a trial the first time they sign in after this feature is deployed.
+Signed-in users get a seven-day Daymark Plus trial. After it expires, task, planning, metrics, and assistant features are blocked; users can still access plan, billing, profile, and logout pages. Daymark Plus is priced at R$ 80 per month. New registrations begin their trial immediately; existing accounts without a subscription get a trial the first time they sign in after this feature is deployed.
 
 Anyone can open `/plans` before creating an account. Choosing Plus starts the sign-up flow and then opens `/billing/checkout/plus`; signed-in users can also use `/billing` to view their account plan. The checkout page becomes active after its Stripe configuration is complete. Expired users remain blocked until Stripe confirms a subscription.
 
@@ -68,7 +68,7 @@ Stripe billing is implemented with hosted Checkout, the customer billing portal,
 | `STRIPE_PRICE_PLUS` | Stripe recurring Price ID for Daymark Plus. |
 | `APP_BASE_URL` | Public base URL of this app, such as `https://your-domain.example`; use `http://127.0.0.1:5000` locally. |
 
-In Stripe, create a Daymark Plus product and a recurring monthly price of BRL 200, then copy its Price ID to `STRIPE_PRICE_PLUS`. Configure a webhook endpoint at `https://your-domain.example/stripe/webhook` (for local development, forward Stripe CLI events to `http://127.0.0.1:5000/stripe/webhook`). Subscribe it to `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`, and `invoice.payment_failed`. Copy the endpoint's signing secret (`whsec_...`) into `STRIPE_WEBHOOK_SECRET` and restart/redeploy the app.
+In Stripe, create a Daymark Plus product and a recurring monthly price of BRL 80, then copy its Price ID to `STRIPE_PRICE_PLUS`. Configure a webhook endpoint at `https://your-domain.example/stripe/webhook` (for local development, forward Stripe CLI events to `http://127.0.0.1:5000/stripe/webhook`). Subscribe it to `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`, and `invoice.payment_failed`. Copy the endpoint's signing secret (`whsec_...`) into `STRIPE_WEBHOOK_SECRET` and restart/redeploy the app.
 
 The checkout button becomes available once all three Stripe values are present. A user who subscribes during the app trial is charged when that same seven-day trial ends; subscribing after it ends starts billing immediately. Checkout and portal sessions are created server-side; webhook events are signature-verified and their event IDs recorded to make retries idempotent. The success redirect only displays confirmation and never grants access on its own. Account deletion expires an open Checkout Session and cancels an existing Stripe subscription before removing local billing data; deletion stops if Stripe cannot confirm those actions. Use Stripe test mode and test cards before switching to live keys. Enable/configure Stripe's customer portal before customers try to manage billing.
 

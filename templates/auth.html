@@ -15,7 +15,7 @@
       <span class="eyebrow">{{ 'SEU ESPAÇO COMEÇA AQUI' if mode == 'register' else 'QUE BOM TER VOCÊ DE VOLTA' }}</span>
       <h2>{{ 'Crie sua conta' if mode == 'register' else 'Boas-vindas de volta' }}</h2>
       <p class="muted">{{ 'Uma forma mais leve de colocar seus planos em prática.' if mode == 'register' else 'Continue de onde você parou.' }}</p>
-      {% if mode == 'register' %}<p class="trial-signup-note">7 dias grátis. Depois, Daymark Plus custa R$ 200/mês. Ao escolher Plus, você informa o pagamento no Stripe; a cobrança começa no fim do teste. Cancele antes para evitar a cobrança.</p>{% endif %}
+      {% if mode == 'register' %}<p class="trial-signup-note">7 dias grátis. Depois, Daymark Plus custa R$ 80/mês. Ao escolher Plus, você informa o pagamento no Stripe; a cobrança começa no fim do teste. Cancele antes para evitar a cobrança.</p>{% endif %}
       <form method="post" class="auth-form">
         {% if mode == 'register' %}<label>Seu nome<input name="name" type="text" placeholder="Ana Silva" autocomplete="name" required maxlength="80"></label>{% endif %}
         <label>E-mail<input name="email" type="email" placeholder="voce@exemplo.com" autocomplete="email" required></label>
