@@ -12,6 +12,7 @@
     try {
       const savedTheme = localStorage.getItem("daymark-theme");
       if (savedTheme === "dark") document.documentElement.dataset.theme = "dark";
+      if (localStorage.getItem("daymark-language") === "en") document.documentElement.lang = "en";
     } catch (_) {}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,10 +22,12 @@
   {% block head %}{% endblock %}
 </head>
 <body>
+  <button class="language-toggle" type="button" data-language-toggle aria-label="Change application language" title="Change application language">English</button>
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
   {% endwith %}
   {% block content %}{% endblock %}
   <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='language.js') }}" defer></script>
 </body>
 </html>

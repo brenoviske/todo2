@@ -423,20 +423,22 @@ def create_app():
     @subscription_required
     def suggest_task_steps(task_id):
         task = task_controller.get_task_for_edit(task_id, g.current_user.id)
+        language = request.headers.get("Accept-Language", "pt-BR").lower()
+        english = language.startswith("en")
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            return jsonify(error="O assistente ainda não está configurado."), 503
+            return jsonify(error="The assistant is not configured yet." if english else "O assistente ainda não está configurado."), 503
         try:
             response = OpenAI(api_key=api_key).responses.create(
                 model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
-                instructions="Responda sempre em português do Brasil, com uma ação curta por linha e sem numeração.",
-                input=f"Divida esta tarefa em etapas práticas e pequenas: {task.title}\n{task.notes}",
+                instructions=("Always respond in English, with one short action per line and no numbering." if english else "Responda sempre em português do Brasil, com uma ação curta por linha e sem numeração."),
+                input=(f"Break this task into small practical steps: {task.title}\n{task.notes}" if english else f"Divida esta tarefa em etapas práticas e pequenas: {task.title}\n{task.notes}"),
             )
             steps = [line.strip(" -*\t") for line in response.output_text.splitlines() if line.strip()]
             return jsonify(steps=steps)
         except Exception:
             application.logger.exception("Falha ao sugerir etapas da tarefa")
-            return jsonify(error="Não foi possível sugerir etapas agora."), 502
+            return jsonify(error="Could not suggest steps right now." if english else "Não foi possível sugerir etapas agora."), 502
 
     @application.post("/tasks/<int:task_id>/steps/<int:step_id>/toggle")
     @jwt_required()
@@ -531,30 +533,30 @@ def create_app():
     def chat():
         data = request.get_json(silent=True) or {}
         message = str(data.get("message", "")).strip()
+        english = str(data.get("language", "pt")).lower() == "en"
         if not message:
-            return jsonify(error="Escreva uma mensagem primeiro."), 400
+            return jsonify(error="Write a message first." if english else "Escreva uma mensagem primeiro."), 400
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            return jsonify(error="O assistente ainda não está configurado. Adicione OPENAI_API_KEY ao arquivo .env."), 503
+            return jsonify(error="The assistant is not configured. Add OPENAI_API_KEY to the .env file." if english else "O assistente ainda não está configurado. Adicione OPENAI_API_KEY ao arquivo .env."), 503
 
         task_list = task_controller.task_context(g.current_user.id)
         task_context = "\n".join(
-            f"- [{'concluída' if task.completed else 'pendente'}] {task.title}" for task in task_list
-        ) or "Nenhuma tarefa por enquanto."
+            f"- [{('completed' if task.completed else 'pending') if english else ('concluída' if task.completed else 'pendente')}] {task.title}" for task in task_list
+        ) or ("No tasks yet." if english else "Nenhuma tarefa por enquanto.")
         try:
             response = OpenAI(api_key=api_key).responses.create(
                 model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
                 instructions=(
-                    "Você é um assistente de planejamento objetivo e acolhedor. Responda sempre em português do Brasil. "
-                    "Ajude a organizar tarefas e sugerir próximos passos práticos. Você pode conversar sobre a lista, "
-                    "mas não pode alterá-la.\n\nTarefas atuais:\n" + task_context
+                    ("You are a thoughtful, practical planning assistant. Always respond in English. " if english else "Você é um assistente de planejamento objetivo e acolhedor. Responda sempre em português do Brasil. ")
+                    + ("Help organize tasks and suggest practical next steps. You may discuss the list, but cannot change it.\n\nCurrent tasks:\n" if english else "Ajude a organizar tarefas e sugerir próximos passos práticos. Você pode conversar sobre a lista, mas não pode alterá-la.\n\nTarefas atuais:\n") + task_context
                 ),
                 input=message,
             )
             return jsonify(reply=response.output_text)
         except Exception:
             application.logger.exception("Falha ao consultar a API da OpenAI")
-            return jsonify(error="O assistente não conseguiu responder agora. Tente novamente."), 502
+            return jsonify(error="The assistant could not reply just now. Please try again." if english else "O assistente não conseguiu responder agora. Tente novamente."), 502
 
     with application.app_context():
         db.create_all()
