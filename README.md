@@ -24,19 +24,19 @@ Set separate, private random values for `SECRET_KEY` and `JWT_SECRET_KEY` in you
 python app.py
 ```
 
-Visit http://127.0.0.1:5000 and create an account. SQLite database `tasks.db` is created automatically when `DATABASE_URL` is not changed. For MySQL, use a SQLAlchemy URL in the form `mysql+pymysql://user:password@host:3306/database`; the `PyMySQL` driver is included in `requirements.txt`. Railway's `.internal` database hostname is only reachable from services running inside Railway. For local development, use SQLite, a Railway tunnel, or the database's public TCP URL.
+Visit http://127.0.0.1:5000 and create an account. SQLite database `tasks.db` is created automatically when `DATABASE_URL` is not changed. MySQL (`mysql+pymysql://`) and PostgreSQL (`postgresql+psycopg://`) are also supported. For local development, SQLite is the simplest option; remote databases require a public connection URL or a provider tunnel.
 
 ## Deploying on Railway
 
-Deploy the Flask app and MySQL database as separate services in the same Railway project and environment. The `Procfile` starts the Flask app with Gunicorn and binds it to Railway's assigned `$PORT`. Gunicorn is installed on Linux deployments and skipped on Windows development environments.
+Deploy the Flask app on Railway and create a PostgreSQL database on Render. The `Procfile` starts the Flask app with Gunicorn and binds it to Railway's assigned `$PORT`. Gunicorn is installed on Linux deployments and skipped on Windows development environments.
 
-In the Flask service's Railway Variables, set `DATABASE_URL` to a reference to the MySQL service's `MYSQL_URL`, for example `${{MySQL.MYSQL_URL}}` when that database service is named `MySQL`. Use the exact Railway service name in the reference. The internal `*.railway.internal` database address will then resolve from the deployed Flask service. Do not use that private address from your Windows machine.
+In Render, create a PostgreSQL database and copy its **External Database URL**. In the Railway Flask service's Variables, set `DATABASE_URL` to that URL, including `?sslmode=require`. Railway cannot resolve Render's internal hostname; the external URL is required because the app and database run on different providers. Keep the URL private and do not commit it. The app accepts Render's `postgres://` or `postgresql://` URL schemes and selects the psycopg 3 driver automatically.
 
-Set the Flask service's `APP_BASE_URL` to its public HTTPS URL, `COOKIE_SECURE=true`, and `FLASK_DEBUG=false`. Add `SECRET_KEY`, `JWT_SECRET_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_PLUS`, and any optional `OPENAI_API_KEY` as Railway service variables. Keep local credentials in `.env`; do not commit that file. Configure Stripe's production webhook to use `https://your-app-domain/stripe/webhook` and its production signing secret.
+Set the Flask service's `APP_BASE_URL` to its public HTTPS URL, `COOKIE_SECURE=true`, and `FLASK_DEBUG=false`. Add `SECRET_KEY`, `JWT_SECRET_KEY`, `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_PLUS`, and any optional `OPENAI_API_KEY` as Railway service variables. Keep local credentials in `.env`; do not commit that file. Configure Stripe's production webhook to use `https://your-app-domain/stripe/webhook` and its production signing secret.
 
 ## Dependencies
 
-The packages installed by `requirements.txt` are Flask (web server and routes), Flask-SQLAlchemy (relational ORM), Flask-JWT-Extended (JWT access tokens in HttpOnly cookies, with CSRF protection), PyMySQL (MySQL driver), Stripe's Python SDK (hosted Checkout and billing portal), OpenAI (server-side Responses API client), and python-dotenv (loads `.env`). Gunicorn is installed on Linux for Railway production serving and is skipped on Windows. SQLite is included with Python, so a separate database package is not needed for local use.
+The packages installed by `requirements.txt` are Flask (web server and routes), Flask-SQLAlchemy (relational ORM), Flask-JWT-Extended (JWT access tokens in HttpOnly cookies, with CSRF protection), PyMySQL (MySQL driver), psycopg 3 (PostgreSQL driver), Stripe's Python SDK (hosted Checkout and billing portal), OpenAI (server-side Responses API client), and python-dotenv (loads `.env`). Gunicorn is installed on Linux for Railway production serving and is skipped on Windows. SQLite is included with Python, so a separate database package is not needed for local use.
 
 For deployment, set `FLASK_DEBUG=false`, set strong independent random `SECRET_KEY` and `JWT_SECRET_KEY` values, set `COOKIE_SECURE=true`, and configure a persistent production database. The browser never receives the JWT in JavaScript; it is stored in an HttpOnly cookie. Unsafe form and API requests must pass the JWT double-submit CSRF check. Never commit `.env` or expose API keys in frontend code.
 

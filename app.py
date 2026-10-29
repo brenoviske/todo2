@@ -47,7 +47,11 @@ def create_app():
     application = Flask(__name__)
     application.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or secrets.token_urlsafe(32)
     database_url = (os.getenv("DATABASE_URL") or "sqlite:///tasks.db").strip()
-    if database_url.startswith("mysql://"):
+    if database_url.startswith("postgres://"):
+        database_url = "postgresql+psycopg://" + database_url[len("postgres://"):]
+    elif database_url.startswith("postgresql://"):
+        database_url = "postgresql+psycopg://" + database_url[len("postgresql://"):]
+    elif database_url.startswith("mysql://"):
         database_url = "mysql+pymysql://" + database_url[len("mysql://"):]
     elif database_url.startswith("mysql+mysqldb://"):
         database_url = "mysql+pymysql://" + database_url[len("mysql+mysqldb://"):]
