@@ -170,6 +170,7 @@ def create_app():
                 request.form.get("name", ""),
                 request.form.get("email", ""),
                 request.form.get("password", ""),
+                request.form.get("confirm_password", ""),
             )
             if error:
                 flash(error, "error")

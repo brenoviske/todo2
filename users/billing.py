@@ -34,7 +34,7 @@ def get_or_create_subscription(user):
         plan_id="plus",
         status="trialing",
         trial_ends_at=trial_starts_at + TRIAL_DURATION,
-        trial_duration_days=7,
+        trial_duration_days=14,
     )
     if subscription.trial_ends_at <= datetime.utcnow():
         subscription.status = "expired"

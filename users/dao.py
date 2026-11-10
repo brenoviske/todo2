@@ -19,17 +19,17 @@ def email_in_use(email, except_user_id=None):
 
 def create(name, email, password):
     user = User(name=name, email=email)
-    user.set_password(password)
+    user.set_password(password) #  Hashing here the password for the user, storing plain passwords would not be a good security move given the fact that if a hacker infiltrates into the db it can pretty much manipulate any user account;
     db.session.add(user)
     db.session.commit()
     return user
 
 
 def save(user):
-    db.session.commit()
+    db.session.commit() # Saving the user data here;
     return user
 
 
-def delete(user):
+def delete(user): 
     db.session.delete(user)
     db.session.commit()

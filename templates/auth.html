@@ -19,8 +19,10 @@
       <form method="post" class="auth-form">
         {% if mode == 'register' %}<label>Seu nome<input name="name" type="text" placeholder="Ana Silva" autocomplete="name" required maxlength="80"></label>{% endif %}
         <label>E-mail<input name="email" type="email" placeholder="voce@exemplo.com" autocomplete="email" required></label>
-        <label>Senha<input name="password" type="password" placeholder="Pelo menos 8 caracteres" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" required minlength="8"></label>
-        <button class="button button-dark button-wide" type="submit">{{ 'Criar conta' if mode == 'register' else 'Entrar' }} <span>→</span></button>
+        <label>Senha<input id="password" name="password" type="password" placeholder="{{ 'Pelo menos 12 caracteres' if mode == 'register' else 'Sua senha' }}" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" required {% if mode == 'register' %}minlength="12" aria-describedby="password-strength-text"{% endif %}></label>
+        {% if mode == 'register' %}<div class="password-strength" aria-live="polite"><div class="password-strength-track" role="progressbar" aria-label="Força da senha" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><span id="password-strength-bar"></span></div><span id="password-strength-text">Use 12+ caracteres, incluindo letras, números e símbolos.</span></div>{% endif %}
+        {% if mode == 'register' %}<label>Confirme sua senha<input id="confirm-password" name="confirm_password" type="password" placeholder="Digite a senha novamente" autocomplete="new-password" required aria-describedby="password-match-text"></label><div id="password-match-text" class="password-match" aria-live="polite">Digite sua senha novamente para confirmar.</div>{% endif %}
+        <button id="auth-submit" class="button button-dark button-wide" type="submit">{{ 'Criar conta' if mode == 'register' else 'Entrar' }} <span>→</span></button>
       </form>
       <p class="auth-switch">{{ 'Já tem uma conta?' if mode == 'register' else 'Ainda não tem uma conta?' }} <a href="{{ url_for('login' if mode == 'register' else 'register', next=request.args.get('next')) }}">{{ 'Entrar' if mode == 'register' else 'Criar uma conta' }}</a></p>
       <p class="auth-plans-link"><a href="{{ url_for('plans') }}">Ver planos e opções de upgrade →</a></p>
@@ -28,4 +30,41 @@
     </div>
   </section>
 </main>
+{% if mode == 'register' %}<script>
+(() => {
+  const input = document.getElementById('password');
+  const confirmInput = document.getElementById('confirm-password');
+  const form = input.form;
+  const button = document.getElementById('auth-submit');
+  const track = document.querySelector('.password-strength-track');
+  const bar = document.getElementById('password-strength-bar');
+  const message = document.getElementById('password-strength-text');
+  const matchMessage = document.getElementById('password-match-text');
+  const labels = ['Muito fraca', 'Fraca', 'Razoável', 'Boa', 'Forte'];
+  function scorePassword(value) {
+    if (!value) return 0;
+    const kinds = [/[a-z]/.test(value), /[A-Z]/.test(value), /[0-9]/.test(value), /[^A-Za-z0-9]/.test(value)].filter(Boolean).length;
+    let score = Math.min(4, Number(value.length >= 8) + Number(value.length >= 12) + Number(kinds >= 2) + Number(kinds >= 3));
+    if (/^(.)\1+$/.test(value) || new Set(value).size <= 2 || ['password123!', 'qwerty123456!', 'letmein12345!', 'welcome12345!'].includes(value.toLowerCase())) score = Math.min(score, 1);
+    return score;
+  }
+  function update() {
+    const value = input.value;
+    const score = scorePassword(value);
+    const strong = value.length >= 12 && score === 4;
+    const matches = confirmInput.value.length > 0 && value === confirmInput.value;
+    track.setAttribute('aria-valuenow', score);
+    track.dataset.strength = score === 4 ? 'strong' : score >= 3 ? 'good' : score >= 2 ? 'fair' : 'weak';
+    bar.style.width = `${score * 25}%`;
+    message.textContent = value ? `${labels[score]}${strong ? ' — senha aceita.' : ' — para continuar, deixe a senha forte.'}` : 'Use 12+ caracteres, incluindo letras, números e símbolos.';
+    matchMessage.textContent = !confirmInput.value ? 'Digite sua senha novamente para confirmar.' : matches ? 'As senhas coincidem.' : 'As senhas não coincidem.';
+    matchMessage.dataset.matches = matches ? 'true' : 'false';
+    button.disabled = !strong || !matches;
+  }
+  input.addEventListener('input', update);
+  confirmInput.addEventListener('input', update);
+  form.addEventListener('submit', event => { if (!scorePassword(input.value) || input.value.length < 12 || scorePassword(input.value) !== 4 || input.value !== confirmInput.value) { event.preventDefault(); update(); (input.value !== confirmInput.value ? confirmInput : input).focus(); } });
+  button.disabled = true;
+})();
+</script>{% endif %}
 {% endblock %}
